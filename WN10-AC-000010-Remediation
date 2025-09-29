@@ -1,0 +1,45 @@
+<#
+.SYNOPSIS
+    Sets Account Lockout STIG policy
+.DESCRIPTION
+   The number of allowed bad logon attempts must be configured to 3 or less.
+
+.NOTES
+    Author          : Zachary Moses
+    LinkedIn        : https://www.linkedin.com/in/zach-moses-a3722a212/
+    GitHub          : https://github.com/users/zacharytmoses-cyber
+    Date Created    : 2025-09-29
+    Last Modified   : 2025-09-29
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-AC-000035
+
+.TESTED ON
+    Date(s) Tested  : 2025-09-27
+    Tested By       : Zachary Moses
+    Systems Tested  : Windows 10 Pro 10.0.19045 Build 19045
+    PowerShell Ver. : 5.1.19041.6328
+#>
+
+# Run as Administrator
+
+$desiredThreshold = 3
+
+# Get current lockout threshold
+$current = (net accounts | Select-String "Lockout threshold" | ForEach-Object { ($_ -split ":\s*")[1].Trim() })
+
+if ([int]$current -eq 0 -or [int]$current -gt $desiredThreshold) {
+    Write-Host "Current Account Lockout Threshold is $current. Updating to $desiredThreshold invalid attempts..." -ForegroundColor Yellow
+    
+    # Set lockout threshold only
+    net accounts /lockoutthreshold:$desiredThreshold
+    
+    Write-Host "✅ Account Lockout Threshold set to $desiredThreshold invalid logon attempts." -ForegroundColor Green
+} else {
+    Write-Host "Current Account Lockout Threshold ($current) is already compliant. No changes needed." -ForegroundColor Green
+}
+
+# Verify
+net accounts | Select-String "Lockout threshold"
+
