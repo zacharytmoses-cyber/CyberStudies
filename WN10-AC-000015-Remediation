@@ -1,0 +1,47 @@
+<#
+.SYNOPSIS
+    Configures only the Account Lockout reset counter for account lockout policy
+.DESCRIPTION
+    Sets account lockout counter after 15 minutes.
+
+.NOTES
+    Author          : Zachary Moses
+    LinkedIn        : https://www.linkedin.com/in/zach-moses-a3722a212/
+    GitHub          : https://github.com/users/zacharytmoses-cyber
+    Date Created    : 2025-09-27
+    Last Modified   : 2025-09-27
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-AC-000015
+
+.TESTED ON
+    Date(s) Tested  : 2025-09-27
+    Tested By       : Zachary Moses
+    Systems Tested  : Windows 10 Pro 10.0.19045 Build 19045
+    PowerShell Ver. : 5.1.19041.6328
+
+.USAGE
+
+Please run this as administrator after testing in isolated sandbox vm prior to any production systems. Run this in Windows Powershell. 
+#>
+# Run as Administrator
+
+$desiredResetMinutes = 15
+
+# Get current reset counter
+$current = (net accounts | Select-String "Lockout counter" | ForEach-Object { ($_ -split ":\s*")[1].Trim() })
+
+if ([int]$current -ne $desiredResetMinutes) {
+    Write-Host "Current Reset Account Lockout Counter is $current minutes. Updating to $desiredResetMinutes minutes..." -ForegroundColor Yellow
+    
+    # Set only the reset counter
+    net accounts /lockoutwindow:$desiredResetMinutes
+
+    Write-Host "✅ Reset Account Lockout Counter successfully set to $desiredResetMinutes minutes." -ForegroundColor Green
+} else {
+    Write-Host "Reset Account Lockout Counter is already $current minutes. No changes needed." -ForegroundColor Green
+}
+
+# Verify
+net accounts | Select-String "Lockout counter"
