@@ -9,6 +9,23 @@
     to require both NTLMv2 session security and 128-bit encryption.
 
 .NOTES
+    Author          : Zachary Moses
+    LinkedIn        : https://www.linkedin.com/in/zach-moses-a3722a212/
+    GitHub          : https://github.com/users/zacharytmoses-cyber
+    Date Created    : 2025-09-29
+    Last Modified   : 2025-09-29
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-AC-000035
+
+.TESTED ON
+    Date(s) Tested  : 2025-09-27
+    Tested By       : Zachary Moses
+    Systems Tested  : Windows 10 Pro 10.0.19045 Build 19045
+    PowerShell Ver. : 5.1.19041.6328
+
+.NOTES
     Run this script in an elevated (Administrator) PowerShell session.
 #>
 
