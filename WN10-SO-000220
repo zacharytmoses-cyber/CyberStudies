@@ -1,0 +1,35 @@
+<#
+.SYNOPSIS
+    Configures NTLM SSP server minimum session security requirements.
+
+.DESCRIPTION
+    Enforces the local security policy:
+    Computer Configuration >> Windows Settings >> Security Settings >> Local Policies >> Security Options >>
+    "Network security: Minimum session security for NTLM SSP based (including secure RPC) servers"
+    to require both NTLMv2 session security and 128-bit encryption.
+
+.NOTES
+    Run this script in an elevated (Administrator) PowerShell session.
+#>
+
+$regPath  = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0"
+$regName  = "NtlmMinServerSec"
+$regValue = 0x20080030   # Require NTLMv2 + Require 128-bit encryption
+
+try {
+    # Ensure the registry path exists
+    if (-not (Test-Path $regPath)) {
+        New-Item -Path $regPath -Force | Out-Null
+    }
+
+    # Apply the setting
+    Set-ItemProperty -Path $regPath -Name $regName -Value $regValue -Type DWord -Force
+
+    # Confirm
+    $current = (Get-ItemProperty -Path $regPath -Name $regName).$regName
+    Write-Host "Configured $regName to value: $current (decimal)."
+}
+catch {
+    Write-Error "Failed to configure $regName. Error: $_"
+    exit 1
+}
